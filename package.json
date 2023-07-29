@@ -1,0 +1,12 @@
+{
+  "name": "learning-management-system",
+  "version": "1.0.0",
+  "description": "school management system",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["lms", "nodejs", "school management software"],
+  "author": "Codepantha",
+  "license": "ISC"
+}
