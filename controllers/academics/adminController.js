@@ -29,12 +29,19 @@ exports.register = async (req, res) => {
 //@route POST /api/v1/admins/login
 //@access Private
 
-exports.login = (req, res) => {
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    res.status(200).json({
-      status: 'success',
-      data: 'Login successful'
-    });
+    const user = await Admin.findOne({ email });
+
+    if (user && (await user.verifyPassword(password)))
+      return res.status(200).json({
+        status: 'success',
+        data: user
+      });
+
+    return res.json({ message: 'Invalid login credentials' });
   } catch (error) {
     res.json({
       status: 'failed',
