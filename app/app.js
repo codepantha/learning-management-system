@@ -6,6 +6,7 @@ const app = express();
 
 //=======Middleware=========//
 app.use(morgan('dev'));
+app.use(express.json());
 
 // Routes
 app.use('/api/v1/admins', adminRouter);

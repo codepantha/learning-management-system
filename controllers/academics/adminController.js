@@ -2,11 +2,20 @@
 //@route POST /api/v1/admins/register
 //@access Private
 
-exports.register = (req, res) => {
+const Admin = require('../../models/Staff/Admin');
+
+exports.register = async (req, res) => {
   try {
+    const { name, email, password } = req.body;
+    // check if admin exists
+    const adminExists = await Admin.findOne({ email });
+    if (adminExists) return res.json('Admin Exists!');
+
+    const user = await Admin.create({ name, email, password });
+
     res.status(201).json({
       status: 'success',
-      data: 'Admin has been registered',
+      data: user
     });
   } catch (error) {
     res.json({
@@ -14,7 +23,7 @@ exports.register = (req, res) => {
       error: error.message
     });
   }
-}
+};
 
 //@desc Login admin
 //@route POST /api/v1/admins/login
@@ -25,14 +34,14 @@ exports.login = (req, res) => {
     res.status(200).json({
       status: 'success',
       data: 'Login successful'
-    })
+    });
   } catch (error) {
     res.json({
       status: 'failed',
-      error: error.message,
-    })
+      error: error.message
+    });
   }
-}
+};
 
 //@desc Get all admins
 //@route GET /api/v1/admins
@@ -43,14 +52,14 @@ exports.index = (req, res) => {
     res.status(200).json({
       status: 'success',
       data: 'All admins'
-    })
+    });
   } catch (error) {
     res.json({
       status: 'failed',
-      error: error.message,
-    })
+      error: error.message
+    });
   }
-}
+};
 
 //@desc Get single admin
 //@route GET /api/v1/admins/:id
@@ -61,14 +70,14 @@ exports.show = (req, res) => {
     res.status(200).json({
       status: 'success',
       data: 'Single admin'
-    })
+    });
   } catch (error) {
     res.json({
       status: 'failed',
-      error: error.message,
-    })
+      error: error.message
+    });
   }
-}
+};
 
 //@desc Update single admin
 //@route PUT /api/v1/admins/:id
@@ -79,14 +88,14 @@ exports.update = (req, res) => {
     res.status(200).json({
       status: 'success',
       data: 'Updated admin'
-    })
+    });
   } catch (error) {
     res.json({
       status: 'failed',
-      error: error.message,
-    })
+      error: error.message
+    });
   }
-}
+};
 
 //@desc Delete single admin
 //@route DELETE /api/v1/admins/:id
@@ -97,14 +106,14 @@ exports.destroy = (req, res) => {
     res.status(200).json({
       status: 'success',
       data: 'Deleted admin'
-    })
+    });
   } catch (error) {
     res.json({
       status: 'failed',
-      error: error.message,
-    })
+      error: error.message
+    });
   }
-}
+};
 
 //@desc Suspend a teacher
 //@route PUT /api/v1/admins/suspend/teacher/:id
@@ -115,14 +124,14 @@ exports.suspendTeacher = (req, res) => {
     res.status(200).json({
       status: 'success',
       data: 'Suspended teacher'
-    })
+    });
   } catch (error) {
     res.json({
       status: 'failed',
-      error: error.message,
-    })
+      error: error.message
+    });
   }
-}
+};
 
 //@desc Unsuspend a teacher
 //@route PUT /api/v1/admins/unsuspend/teacher/:id
@@ -133,14 +142,14 @@ exports.unsuspendTeacher = (req, res) => {
     res.status(200).json({
       status: 'success',
       data: 'teacher suspension lifted'
-    })
+    });
   } catch (error) {
     res.json({
       status: 'failed',
-      error: error.message,
-    })
+      error: error.message
+    });
   }
-}
+};
 
 //@desc Withdraw a teacher
 //@route PUT /api/v1/admins/withdraw/teacher/:id
@@ -151,14 +160,14 @@ exports.withdrawTeacher = (req, res) => {
     res.status(200).json({
       status: 'success',
       data: 'Withdrawn teacher'
-    })
+    });
   } catch (error) {
     res.json({
       status: 'failed',
-      error: error.message,
-    })
+      error: error.message
+    });
   }
-}
+};
 
 //@desc unWithdraw a teacher
 //@route PUT /api/v1/admins/unwithdraw/teacher/:id
@@ -169,14 +178,14 @@ exports.unWithdrawTeacher = (req, res) => {
     res.status(200).json({
       status: 'success',
       data: 'teacher withdrawal reversed'
-    })
+    });
   } catch (error) {
     res.json({
       status: 'failed',
-      error: error.message,
-    })
+      error: error.message
+    });
   }
-}
+};
 
 //@desc publish exam result
 //@route PUT /api/v1/admins/publish/exam/:id
@@ -187,12 +196,12 @@ exports.publishExamResult = (req, res) => {
     res.status(200).json({
       status: 'success',
       data: 'exam results published'
-    })
+    });
   } catch (error) {
     res.json({
       status: 'failed',
-      error: error.message,
-    })
+      error: error.message
+    });
   }
 };
 
@@ -205,11 +214,11 @@ exports.unPublishExamResult = (req, res) => {
     res.status(200).json({
       status: 'success',
       data: 'exam results unpublished'
-    })
+    });
   } catch (error) {
     res.json({
       status: 'failed',
-      error: error.message,
-    })
+      error: error.message
+    });
   }
-}
+};
