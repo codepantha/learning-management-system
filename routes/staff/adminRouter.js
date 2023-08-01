@@ -11,7 +11,7 @@ const {
   unWithdrawTeacher,
   publishExamResult,
   unPublishExamResult
-} = require('../../controllers/academics/AdminController');
+} = require('../../controllers/staff/adminController');
 
 const adminRouter = require('express').Router();
 
