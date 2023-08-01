@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 require('express-async-errors');
 const adminRouter = require('../routes/staff/adminRouter');
+const { globalErrorHandler, notFoundError } = require('../middleware/globalErrorHandler');
 
 const app = express();
 
@@ -13,16 +14,7 @@ app.use(express.json());
 app.use('/api/v1/admins', adminRouter);
 
 // Error middleware
-app.use((err, req, res, next) => {
-  if (err) {
-    const stack = err.stack;
-    const message = err.message;
-    const status = err.status ? err.status : 'failed';
-    const statusCode = err.statusCode ? err.statusCode : 500;
-
-    return res.status(statusCode).json({ status, message, stack });
-  }
-  next();
-});
+app.use(notFoundError)
+app.use(globalErrorHandler);
 
 module.exports = app;
