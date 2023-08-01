@@ -1,3 +1,5 @@
+const CustomError = require("../errors/CustomError");
+
 const globalErrorHandler = (err, req, res, next) => {
   if (err) {
     const stack = err.stack;
@@ -11,8 +13,7 @@ const globalErrorHandler = (err, req, res, next) => {
 }
 
 const notFoundError = (req, res, next) => {
-  const err = new Error(`cannot find ${req.originalUrl} on the server`);
-  err.statusCode = 404;
+  const err = new CustomError(`cannot find ${req.originalUrl} on the server`, 404)
   next(err)
 }
 
