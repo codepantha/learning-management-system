@@ -1,13 +1,20 @@
-const CustomError = require("../errors/CustomError");
+const CustomError = require('../errors/CustomError');
+const Admin = require('../models/Staff/Admin');
+const verifyToken = require('../utils/verifyToken');
 
-const isLoggedIn = (req, res, next) => {
-  const userAuth = req.userAuth;
-  if (!userAuth) {
-    const err = new CustomError('You are not logged in', 401);
-    
+const isLoggedIn = async (req, res, next) => {
+  const token = req.headers.authorization.split(' ')[1];
+  const verifiedToken = verifyToken(token);
+
+  if (!verifiedToken) {
+    const err = new CustomError('Token expired or invalid', 401);
     return next(err);
   }
+
+  const user = await Admin.findById(verifiedToken.id).select('name email role')
+  if (user) req.userAuth = user
+
   next();
-}
+};
 
 module.exports = isLoggedIn;

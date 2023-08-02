@@ -3,13 +3,15 @@
 //@access Private
 
 const Admin = require('../../models/Staff/Admin');
+const generateToken = require('../../utils/generateToken');
+const verifyToken = require('../../utils/verifyToken');
 
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
   // check if admin exists
   const adminExists = await Admin.findOne({ email });
   if (adminExists) {
-    error = new Error('Admin Exists!')
+    error = new Error('Admin Exists!');
     error.statusCode = 400;
     throw error;
   }
@@ -29,22 +31,22 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
-  try {
-    const user = await Admin.findOne({ email });
+  const user = await Admin.findOne({ email });
 
-    if (user && (await user.verifyPassword(password)))
-      return res.status(200).json({
-        status: 'success',
-        data: user
-      });
+  if (user && (await user.verifyPassword(password))) {
+    const token = generateToken(user._id)
 
-    return res.json({ message: 'Invalid login credentials' });
-  } catch (error) {
-    res.json({
-      status: 'failed',
-      error: error.message
+    const verify = verifyToken(token);
+
+    delete user._doc.password
+
+    return res.status(200).json({
+      status: 'success',
+      data: token, user, verify
     });
   }
+
+  return res.json({ message: 'Invalid login credentials' });
 };
 
 //@desc Get all admins
@@ -70,6 +72,7 @@ exports.index = (req, res) => {
 //@access Private
 
 exports.show = (req, res) => {
+  console.log(req.userAuth)
   try {
     res.status(200).json({
       status: 'success',
