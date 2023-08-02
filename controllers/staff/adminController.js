@@ -2,6 +2,7 @@
 //@route POST /api/v1/admins/register
 //@access Private
 
+const CustomError = require('../../errors/CustomError');
 const Admin = require('../../models/Staff/Admin');
 const generateToken = require('../../utils/generateToken');
 const verifyToken = require('../../utils/verifyToken');
@@ -20,7 +21,8 @@ exports.register = async (req, res) => {
 
   res.status(201).json({
     status: 'success',
-    data: user
+    data: user,
+    message: 'Admin registration successful.'
   });
 };
 
@@ -34,15 +36,12 @@ exports.login = async (req, res) => {
   const user = await Admin.findOne({ email });
 
   if (user && (await user.verifyPassword(password))) {
-    const token = generateToken(user._id)
-
-    const verify = verifyToken(token);
-
-    delete user._doc.password
+    const token = generateToken(user._id);
 
     return res.status(200).json({
       status: 'success',
-      data: token, user, verify
+      data: token,
+      message: 'Admin login successful.'
     });
   }
 
@@ -71,19 +70,17 @@ exports.index = (req, res) => {
 //@route GET /api/v1/admins/:id
 //@access Private
 
-exports.show = (req, res) => {
-  console.log(req.userAuth)
-  try {
-    res.status(200).json({
-      status: 'success',
-      data: 'Single admin'
-    });
-  } catch (error) {
-    res.json({
-      status: 'failed',
-      error: error.message
-    });
-  }
+exports.show = async (req, res) => {
+  const admin = await Admin.findById(req.userAuth.id).select(
+    '-password -createdAt -updatedAt'
+  );
+
+  if (!admin) throw new CustomError('Admin not found', 404);
+  res.status(200).json({
+    status: 'success',
+    data: admin,
+    message: 'Admin profile fetched successfully.'
+  });
 };
 
 //@desc Update single admin

@@ -26,7 +26,7 @@ adminRouter.post('/register', register);
 adminRouter.post('/login', login);
 
 // Get single admin
-adminRouter.get('/:id', isLoggedIn, show);
+adminRouter.get('/profile', isLoggedIn, show);
 
 // Update admin
 adminRouter.put('/:id', update);

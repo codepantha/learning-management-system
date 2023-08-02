@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const adminSchema = new mongoose.Schema(
+const { Schema } = mongoose;
+
+const adminSchema = new Schema(
   {
     name: {
       type: String,
@@ -18,7 +20,37 @@ const adminSchema = new mongoose.Schema(
     role: {
       type: String,
       default: 'admin'
-    }
+    },
+    academicTerms: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'AcademicTerm'
+      }
+    ],
+    academicYears: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'AcademicYear'
+      }
+    ],
+    classLevels: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'ClassLevel'
+      }
+    ],
+    teachers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Teacher'
+      }
+    ],
+    students: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Student'
+      }
+    ]
   },
   { timestamps: true }
 );
