@@ -52,25 +52,21 @@ exports.login = async (req, res) => {
 //@route GET /api/v1/admins
 //@access Private
 
-exports.index = (req, res) => {
-  try {
-    res.status(200).json({
-      status: 'success',
-      data: 'All admins'
-    });
-  } catch (error) {
-    res.json({
-      status: 'failed',
-      error: error.message
-    });
-  }
+exports.index = async (req, res) => {
+  const admins = await Admin.find();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Admins fetched successfully',
+    data: admins
+  });
 };
 
-//@desc Get single admin
+//@desc Get admin profile
 //@route GET /api/v1/admins/:id
 //@access Private
 
-exports.show = async (req, res) => {
+exports.profile = async (req, res) => {
   const admin = await Admin.findById(req.userAuth.id).select(
     '-password -createdAt -updatedAt'
   );
@@ -87,18 +83,26 @@ exports.show = async (req, res) => {
 //@route PUT /api/v1/admins/:id
 //@access Private
 
-exports.update = (req, res) => {
-  try {
-    res.status(200).json({
-      status: 'success',
-      data: 'Updated admin'
-    });
-  } catch (error) {
-    res.json({
-      status: 'failed',
-      error: error.message
-    });
-  }
+exports.update = async (req, res) => {
+  const { email, name, password } = req.body;
+
+  console.log({ userAuthId: req.userAuth })
+
+  const emailExists = await Admin.findOne({ email });
+
+  if (emailExists) throw new CustomError('Email already in use', 409);
+
+  const admin = await Admin.findByIdAndUpdate(
+    req.userAuth._id,
+    { email, name, password },
+    { new: true, runValidators: true }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    data: admin,
+    message: 'Admin updated successfully.'
+  })
 };
 
 //@desc Delete single admin
