@@ -6,6 +6,7 @@ const CustomError = require('../../errors/CustomError');
 const Admin = require('../../models/Staff/Admin');
 const generateToken = require('../../utils/generateToken');
 const verifyToken = require('../../utils/verifyToken');
+const bcrypt = require('bcryptjs');
 
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -86,23 +87,34 @@ exports.profile = async (req, res) => {
 exports.update = async (req, res) => {
   const { email, name, password } = req.body;
 
-  console.log({ userAuthId: req.userAuth })
-
   const emailExists = await Admin.findOne({ email });
 
   if (emailExists) throw new CustomError('Email already in use', 409);
 
-  const admin = await Admin.findByIdAndUpdate(
-    req.userAuth._id,
-    { email, name, password },
-    { new: true, runValidators: true }
-  );
+  let admin;
+
+  if (password) {
+    const salt = await bcrypt.genSalt(10);
+    const encPassword = await bcrypt.hash(password, salt);
+
+    admin = await Admin.findByIdAndUpdate(
+      req.userAuth._id,
+      { email, name, password: encPassword },
+      { new: true, runValidators: true }
+    );
+  } else {
+    admin = await Admin.findByIdAndUpdate(
+      req.userAuth._id,
+      { email, name },
+      { new: true, runValidators: true }
+    );
+  }
 
   res.status(200).json({
     status: 'success',
     data: admin,
     message: 'Admin updated successfully.'
-  })
+  });
 };
 
 //@desc Delete single admin
