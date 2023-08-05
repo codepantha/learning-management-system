@@ -71,7 +71,7 @@ exports.index = async (req, res) => {
 exports.profile = async (req, res) => {
   const admin = await Admin.findById(req.userAuth.id).select(
     '-password -createdAt -updatedAt'
-  );
+  ).populate('academicYears');
 
   if (!admin) throw new CustomError('Admin not found', 404);
   res.status(200).json({

@@ -1,5 +1,6 @@
 const CustomError = require('../../errors/CustomError');
 const AcademicYear = require('../../models/Academic/AcademicYear');
+const Admin = require('../../models/Staff/Admin');
 
 //@desc Get all Academic Years
 //@route GET /api/v1/academic-years
@@ -32,6 +33,7 @@ exports.show = async (req, res) => {
 
 exports.create = async (req, res) => {
   const { name, fromYear, toYear } = req.body;
+  const adminId = req.userAuth._id;
 
   const exists = await AcademicYear.findOne({ name });
 
@@ -41,8 +43,13 @@ exports.create = async (req, res) => {
     name,
     fromYear,
     toYear,
-    createdBy: req.userAuth._id
+    createdBy: adminId
   });
+
+  // push academic year into academicYears on admin
+  const admin = await Admin.findById(adminId);
+  admin.academicYears.push(data._id);
+  await admin.save();
 
   res.status(201).json({
     status: 'success',
