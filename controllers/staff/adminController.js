@@ -5,6 +5,7 @@
 const CustomError = require('../../errors/CustomError');
 const Admin = require('../../models/Staff/Admin');
 const generateToken = require('../../utils/generateToken');
+const { hash_password } = require('../../utils/helpers');
 const verifyToken = require('../../utils/verifyToken');
 const bcrypt = require('bcryptjs');
 
@@ -94,8 +95,7 @@ exports.update = async (req, res) => {
   let admin;
 
   if (password) {
-    const salt = await bcrypt.genSalt(10);
-    const encPassword = await bcrypt.hash(password, salt);
+    const encPassword = await hash_password(password)
 
     admin = await Admin.findByIdAndUpdate(
       req.userAuth._id,
