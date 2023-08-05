@@ -14,8 +14,7 @@ const AcademicTermSchema = new Schema(
     },
     duration: {
       type: String,
-      required: true,
-      duration: '3 months'
+      default: '3 months'
     },
     createdBy: {
       type: Schema.Types.ObjectId,
