@@ -2,9 +2,12 @@
 //@route POST /api/v1/admins/register
 //@access Private
 
+const CustomError = require('../../errors/CustomError');
 const Admin = require('../../models/Staff/Admin');
 const generateToken = require('../../utils/generateToken');
+const { hash_password } = require('../../utils/helpers');
 const verifyToken = require('../../utils/verifyToken');
+const bcrypt = require('bcryptjs');
 
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -20,7 +23,8 @@ exports.register = async (req, res) => {
 
   res.status(201).json({
     status: 'success',
-    data: user
+    data: user,
+    message: 'Admin registration successful.'
   });
 };
 
@@ -34,15 +38,12 @@ exports.login = async (req, res) => {
   const user = await Admin.findOne({ email });
 
   if (user && (await user.verifyPassword(password))) {
-    const token = generateToken(user._id)
-
-    const verify = verifyToken(token);
-
-    delete user._doc.password
+    const token = generateToken(user._id);
 
     return res.status(200).json({
       status: 'success',
-      data: token, user, verify
+      data: token,
+      message: 'Admin login successful.'
     });
   }
 
@@ -53,55 +54,67 @@ exports.login = async (req, res) => {
 //@route GET /api/v1/admins
 //@access Private
 
-exports.index = (req, res) => {
-  try {
-    res.status(200).json({
-      status: 'success',
-      data: 'All admins'
-    });
-  } catch (error) {
-    res.json({
-      status: 'failed',
-      error: error.message
-    });
-  }
+exports.index = async (req, res) => {
+  const admins = await Admin.find();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Admins fetched successfully',
+    data: admins
+  });
 };
 
-//@desc Get single admin
+//@desc Get admin profile
 //@route GET /api/v1/admins/:id
 //@access Private
 
-exports.show = (req, res) => {
-  console.log(req.userAuth)
-  try {
-    res.status(200).json({
-      status: 'success',
-      data: 'Single admin'
-    });
-  } catch (error) {
-    res.json({
-      status: 'failed',
-      error: error.message
-    });
-  }
+exports.profile = async (req, res) => {
+  const admin = await Admin.findById(req.userAuth.id).select(
+    '-password -createdAt -updatedAt'
+  ).populate('academicYears');
+
+  if (!admin) throw new CustomError('Admin not found', 404);
+  res.status(200).json({
+    status: 'success',
+    data: admin,
+    message: 'Admin profile fetched successfully.'
+  });
 };
 
 //@desc Update single admin
 //@route PUT /api/v1/admins/:id
 //@access Private
 
-exports.update = (req, res) => {
-  try {
-    res.status(200).json({
-      status: 'success',
-      data: 'Updated admin'
-    });
-  } catch (error) {
-    res.json({
-      status: 'failed',
-      error: error.message
-    });
+exports.update = async (req, res) => {
+  const { email, name, password } = req.body;
+
+  const emailExists = await Admin.findOne({ email });
+
+  if (emailExists) throw new CustomError('Email already in use', 409);
+
+  let admin;
+
+  if (password) {
+    const encPassword = await hash_password(password)
+
+    admin = await Admin.findByIdAndUpdate(
+      req.userAuth._id,
+      { email, name, password: encPassword },
+      { new: true, runValidators: true }
+    );
+  } else {
+    admin = await Admin.findByIdAndUpdate(
+      req.userAuth._id,
+      { email, name },
+      { new: true, runValidators: true }
+    );
   }
+
+  res.status(200).json({
+    status: 'success',
+    data: admin,
+    message: 'Admin updated successfully.'
+  });
 };
 
 //@desc Delete single admin
