@@ -1,9 +1,9 @@
-const { create } = require('../../controllers/academics/AcademicYearController');
+const { create, index, show } = require('../../controllers/academics/AcademicYearController');
 const isAdmin = require('../../middleware/isAdmin');
-const isLoggedIn = require('../../middleware/isLoggedIn');
 
 const router = require('express').Router();
 
-router.route('/').post(isLoggedIn, isAdmin, create);
+router.route('/').get(isAdmin, index).post(isAdmin, create);
+router.route('/:id').get(isAdmin, show);
 
 module.exports = router;
