@@ -51,6 +51,10 @@ exports.create = async (req, res) => {
   });
 };
 
+//@desc Update Academic Year
+//@route PUT /api/v1/academic-years/:id
+//@access Private
+
 exports.update = async (req, res) => {
   const { id } = req.params;
   const { name, fromYear, toYear } = req.body;
@@ -71,3 +75,20 @@ exports.update = async (req, res) => {
     data
   });
 };
+
+//@desc Delete Academic Year
+//@route DELETE /api/v1/academic-years/:id
+//@access Private
+
+exports.destroy = async (req, res) => {
+  const { id } = req.params;
+
+  const data = await AcademicYear.findByIdAndDelete(id);
+
+  if (!data) throw new CustomError('Academic year does not exist', 404);
+
+  res.status(200).json({
+    status: 'success',
+    message: `${data.name} deleted successfully`,
+  })
+}
