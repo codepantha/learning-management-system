@@ -3,13 +3,19 @@ const {
   create,
   show,
   update,
-  destroy
+  destroy,
+  getProgramSubjects,
+  createProjectSubject
 } = require('../../controllers/academics/ProgramController');
 const isAdmin = require('../../middleware/isAdmin');
 
 const router = require('express').Router();
 
 router.route('/').get(isAdmin, index).post(isAdmin, create);
+router
+  .route('/:programId/subjects')
+  .get(isAdmin, getProgramSubjects)
+  .post(isAdmin, createProjectSubject);
 router
   .route('/:id')
   .get(isAdmin, show)

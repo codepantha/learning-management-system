@@ -1,5 +1,6 @@
 const CustomError = require('../../errors/CustomError');
 const Program = require('../../models/Academic/Program');
+const Subject = require('../../models/Academic/Subject');
 const Admin = require('../../models/Staff/Admin');
 
 //@desc Get all Programs
@@ -107,5 +108,61 @@ exports.destroy = async (req, res) => {
   res.status(200).json({
     status: 'success',
     message: `${data.name} deleted successfully`
+  });
+};
+
+//@desc Get all Subjects for a program
+//@route GET /api/v1/programs/:programId/subjects
+//@access Private
+
+exports.getProgramSubjects = async (req, res) => {
+  const { programId } = req.params;
+
+  const program = await Program.findById(programId);
+  if (!program) throw new CustomError('Program does not exist', 404);
+
+  const data = await Program.findById(programId).populate('subjects');
+  return res.status(200).json({
+    status: 'success',
+    message: !data.subjects.length
+      ? 'This program currently has no subjects.'
+      : 'Subjects fetched successfully.',
+    data: data.subjects
+  });
+};
+
+//@desc Create Subject
+//@route POST /api/v1/programs/:programId/subjects
+//@access Private
+
+exports.createProjectSubject = async (req, res) => {
+  const { programId } = req.params;
+  const { name, description, academicTerm, duration } = req.body;
+  const adminId = req.userAuth._id;
+
+  const program = await Program.findById(programId);
+
+  if (!program) throw new CustomError('Program not found.', 404);
+
+  const subjectExists = await Subject.findOne({ name });
+
+  if (subjectExists) throw new CustomError('Duplicate subject.', 409);
+
+  const data = await Subject.create({
+    name,
+    description,
+    academicTerm,
+    duration,
+    createdBy: adminId
+  });
+
+  // push subject into programs
+  program.subjects.push(data._id);
+  await program.save();
+
+  res.status(201).json({
+    status: 'success',
+    message: 'Subject created successfully',
+    data
   });
 };
