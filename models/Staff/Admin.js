@@ -50,6 +50,12 @@ const adminSchema = new Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Student'
       }
+    ],
+    programs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Program'
+      }
     ]
   },
   { timestamps: true }
