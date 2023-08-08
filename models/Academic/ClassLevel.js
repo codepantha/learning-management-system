@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 
-const {
-  Schema: { Types }
-} = mongoose;
+const { Schema } = mongoose;
 
 const ClassLevelSchema = new Schema(
   {
@@ -14,27 +12,27 @@ const ClassLevelSchema = new Schema(
       type: String,
     },
     createdBy: {
-      type: Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Admin',
       required: true,
     },
     // students will be added to the class level when they are registered
     students: [
       {
-        type: Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Student'
       },
     ],
     // optional
     subjects: [
       {
-        type: Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Subject'
       }
     ],
     teachers: [
       {
-        type: Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Teacher',
       }
     ],

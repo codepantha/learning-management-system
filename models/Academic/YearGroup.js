@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema: { Types } } = mongoose;
 
-const YearGroupSchema = new Schema(
+const YearGroupSchema = new mongoose.Schema(
   {
     name: {
       type: String,
