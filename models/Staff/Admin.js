@@ -56,6 +56,12 @@ const adminSchema = new Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Program'
       }
+    ],
+    yearGroups: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'YearGroup'
+      }
     ]
   },
   { timestamps: true }

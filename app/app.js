@@ -7,6 +7,7 @@ const academicTermRouter = require('../routes/academics/academicTermRouter');
 const classLevelRouter = require('../routes/academics/classLevelRouter');
 const programRouter = require('../routes/academics/programRouter');
 const subjectRouter = require('../routes/academics/subjectRouter');
+const yearGroupRouter = require('../routes/academics/yearGroupRouter');
 const { globalErrorHandler, notFoundError } = require('../middleware/globalErrorHandler');
 const isLoggedIn = require('../middleware/isLoggedIn');
 
@@ -23,6 +24,7 @@ app.use('/api/v1/academic-terms', isLoggedIn, academicTermRouter);
 app.use('/api/v1/class-levels', isLoggedIn, classLevelRouter);
 app.use('/api/v1/programs', isLoggedIn, programRouter);
 app.use('/api/v1/subjects', isLoggedIn, subjectRouter);
+app.use('/api/v1/year-groups', isLoggedIn, yearGroupRouter);
 
 // Error middleware
 app.use(notFoundError)
