@@ -1,13 +1,13 @@
-//@desc Register admin
-//@route POST /api/v1/admins/register
-//@access Private
-
 const CustomError = require('../../errors/CustomError');
 const Admin = require('../../models/Staff/Admin');
 const generateToken = require('../../utils/generateToken');
 const { hash_password } = require('../../utils/helpers');
 const verifyToken = require('../../utils/verifyToken');
 const bcrypt = require('bcryptjs');
+
+//@desc Register admin
+//@route POST /api/v1/admins/register
+//@access Private
 
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;

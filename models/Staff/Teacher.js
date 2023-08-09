@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
-const {
-  Schema: { Types }
-} = mongoose;
+const { Schema } = mongoose;
 
 const TeacherSchema = new Schema(
   {
@@ -28,7 +27,7 @@ const TeacherSchema = new Schema(
       default: function () {
         return (
           'TEA' +
-          math.floor(100 + Math.random() * 900) +
+          Math.floor(100 + Math.random() * 900) +
           Date.now().toString().slice(2, 4) +
           this.name
             .split(' ')
@@ -53,9 +52,8 @@ const TeacherSchema = new Schema(
       default: 'teacher'
     },
     subject: {
-      type: Types.ObjectId,
-      ref: 'Subject',
-      required: true
+      type: Schema.Types.ObjectId,
+      ref: 'Subject'
     },
     applicationStatus: {
       type: String,
@@ -63,39 +61,42 @@ const TeacherSchema = new Schema(
       default: 'pending'
     },
     program: {
-      type: Types.ObjectId,
-      ref: 'Program',
-      required: true
+      type: Schema.Types.ObjectId,
+      ref: 'Program'
     },
     // A teacher can teach more than one class level
     classLevel: {
-      type: Types.ObjectId,
-      ref: 'ClassLevel',
-      required: true
+      type: Schema.Types.ObjectId,
+      ref: 'ClassLevel'
     },
     academicYear: {
-      type: Types.ObjectId,
-      ref: 'AcademicYear',
-      required: true
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicYear'
     },
     examsCreated: [
       {
-        type: Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Exam'
       }
     ],
     createdBy: {
-      type: Types.ObjectId,
-      ref: 'Admin',
-      required: true
+      type: Schema.Types.ObjectId,
+      ref: 'Admin'
     },
     academicTerm: {
-      type: Types.ObjectId,
-      ref: 'AcademicTerm',
-      required: true
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicTerm'
     }
   },
   { timestamps: true }
 );
+
+TeacherSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
 
 module.exports = mongoose.model('Teacher', TeacherSchema);

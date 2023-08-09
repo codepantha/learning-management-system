@@ -1,13 +1,17 @@
 const express = require('express');
 const morgan = require('morgan');
 require('express-async-errors');
+
 const adminRouter = require('../routes/staff/adminRouter');
+const teacherRouter = require('../routes/staff/teacherRouter');
+
 const academicYearRouter = require('../routes/academics/academicYearRouter');
 const academicTermRouter = require('../routes/academics/academicTermRouter');
 const classLevelRouter = require('../routes/academics/classLevelRouter');
 const programRouter = require('../routes/academics/programRouter');
 const subjectRouter = require('../routes/academics/subjectRouter');
 const yearGroupRouter = require('../routes/academics/yearGroupRouter');
+
 const { globalErrorHandler, notFoundError } = require('../middleware/globalErrorHandler');
 const isLoggedIn = require('../middleware/isLoggedIn');
 
@@ -25,6 +29,7 @@ app.use('/api/v1/class-levels', isLoggedIn, classLevelRouter);
 app.use('/api/v1/programs', isLoggedIn, programRouter);
 app.use('/api/v1/subjects', isLoggedIn, subjectRouter);
 app.use('/api/v1/year-groups', isLoggedIn, yearGroupRouter);
+app.use('/api/v1/teachers', isLoggedIn, teacherRouter);
 
 // Error middleware
 app.use(notFoundError)
