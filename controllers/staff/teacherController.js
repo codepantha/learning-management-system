@@ -47,7 +47,7 @@ exports.login = async (req, res) => {
 };
 
 //@desc Get all teachers
-//@route POST /api/v1/admin/teachers/
+//@route GET /api/v1/admins/teachers/
 //@access Public
 
 exports.index = async (req, res) => {
@@ -56,6 +56,35 @@ exports.index = async (req, res) => {
   res.status(200).json({
     status: 'success',
     message: 'Teachers fetched successfully.',
-    data: data
+    data
   });
+}
+
+//@desc Show teacher
+//@route GET /api/v1/teachers/:id
+//@access Private loggedInUsers
+
+exports.show = async (req, res) => {
+  const data = await Teacher.findById(req.params.id).select('-password');
+
+  if (!data) throw new CustomError('teacher not found', 404);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Teacher fetched successfully.',
+    data
+  })
+}
+
+exports.profile = async (req, res) => {
+  console.log(req.userAuth._id)
+  const data = await Teacher.findById(req.userAuth._id).select('-password')
+
+  if (!data) throw new CustomError('teacher profile not found', 404);
+  
+  res.status(200).json({
+    status: 'success',
+    message: 'Teacher profile fetched successfully.',
+    data
+  })
 }
