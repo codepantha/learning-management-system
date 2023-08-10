@@ -10,7 +10,8 @@ const {
   unWithdrawTeacher,
   publishExamResult,
   unPublishExamResult,
-  profile
+  profile,
+  updateTeacher
 } = require('../../controllers/staff/adminController');
 const { index: getAllTeachers } = require('../../controllers/staff/teacherController');
 const isAdmin = require('../../middleware/isAdmin');
@@ -55,5 +56,7 @@ adminRouter.put('/publish/exam/:id', publishExamResult);
 adminRouter.put('/unpublish/exam/:id', unPublishExamResult);
 
 adminRouter.get('/teachers', isLoggedIn, isAdmin, getAllTeachers);
+
+adminRouter.put('/teachers/:teacherId', isLoggedIn, isAdmin, updateTeacher);
 
 module.exports = adminRouter;

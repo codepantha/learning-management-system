@@ -61,17 +61,14 @@ const TeacherSchema = new Schema(
       default: 'pending'
     },
     program: {
-      type: Schema.Types.ObjectId,
-      ref: 'Program'
+      type: String,
     },
     // A teacher can teach more than one class level
     classLevel: {
-      type: Schema.Types.ObjectId,
-      ref: 'ClassLevel'
+      type: String,
     },
     academicYear: {
-      type: Schema.Types.ObjectId,
-      ref: 'AcademicYear'
+      type: String,
     },
     examsCreated: [
       {
@@ -84,8 +81,7 @@ const TeacherSchema = new Schema(
       ref: 'Admin'
     },
     academicTerm: {
-      type: Schema.Types.ObjectId,
-      ref: 'AcademicTerm'
+      type: String,
     }
   },
   { timestamps: true }

@@ -1,5 +1,6 @@
 const CustomError = require('../../errors/CustomError');
 const Admin = require('../../models/Staff/Admin');
+const Teacher = require('../../models/Staff/Teacher');
 const generateToken = require('../../utils/generateToken');
 const { hash_password } = require('../../utils/helpers');
 const verifyToken = require('../../utils/verifyToken');
@@ -69,9 +70,9 @@ exports.index = async (req, res) => {
 //@access Private
 
 exports.profile = async (req, res) => {
-  const admin = await Admin.findById(req.userAuth.id).select(
-    '-password -createdAt -updatedAt'
-  ).populate('academicYears');
+  const admin = await Admin.findById(req.userAuth.id)
+    .select('-password -createdAt -updatedAt')
+    .populate('academicYears');
 
   if (!admin) throw new CustomError('Admin not found', 404);
   res.status(200).json({
@@ -95,7 +96,7 @@ exports.update = async (req, res) => {
   let admin;
 
   if (password) {
-    const encPassword = await hash_password(password)
+    const encPassword = await hash_password(password);
 
     admin = await Admin.findByIdAndUpdate(
       req.userAuth._id,
@@ -241,4 +242,33 @@ exports.unPublishExamResult = (req, res) => {
       error: error.message
     });
   }
+};
+
+exports.updateTeacher = async (req, res) => {
+  const { teacherId } = req.params;
+  const { name, email, subject, program, classLevel, academicYear } = req.body;
+
+  const teacher = await Teacher.findById(teacherId);
+
+  if (!teacher) throw new CustomError('Teacher not found.', 404);
+
+  if (email) {
+    const emailExists = await Teacher.findOne({ email });
+    if (emailExists) throw new CustomError('Email exists', 409);
+    teacher.email = email;
+  }
+
+  if (name) teacher.name = name;
+  if (subject) teacher.subject = subject;
+  if (program) teacher.program = program;
+  if (classLevel) teacher.classLevel = classLevel;
+  if (academicYear) teacher.academicYear = academicYear;
+
+  await teacher.save();
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Teacher updated successfully.',
+    data: teacher
+  });
 };
