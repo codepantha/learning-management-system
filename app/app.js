@@ -29,7 +29,7 @@ app.use('/api/v1/class-levels', isLoggedIn, classLevelRouter);
 app.use('/api/v1/programs', isLoggedIn, programRouter);
 app.use('/api/v1/subjects', isLoggedIn, subjectRouter);
 app.use('/api/v1/year-groups', isLoggedIn, yearGroupRouter);
-app.use('/api/v1/teachers', isLoggedIn, teacherRouter);
+app.use('/api/v1/teachers', teacherRouter);
 
 // Error middleware
 app.use(notFoundError)

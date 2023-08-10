@@ -1,5 +1,7 @@
 const CustomError = require('../errors/CustomError');
+const Student = require('../models/Academic/Student');
 const Admin = require('../models/Staff/Admin');
+const Teacher = require('../models/Staff/Teacher');
 const verifyToken = require('../utils/verifyToken');
 
 const isLoggedIn = async (req, res, next) => {
@@ -11,8 +13,14 @@ const isLoggedIn = async (req, res, next) => {
     return next(err);
   }
 
-  const user = await Admin.findById(verifiedToken.id).select('name email role')
-  if (user) req.userAuth = user
+  let user = await Admin.findById(verifiedToken.id).select('name email role');
+  if (!user) {
+    user = await Teacher.findById(verifiedToken.id).select('name email role');
+    if (!user)
+      user = await Student.findById(verifiedToken.id).select('name email role');
+  }
+
+  req.userAuth = user;
 
   next();
 };

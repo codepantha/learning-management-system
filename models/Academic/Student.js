@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 
-const {
-  Schema: { Types }
-} = mongoose;
+const {Schema, Schema: { Types } } = mongoose;
 
 const StudentSchema = new Schema(
   {

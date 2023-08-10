@@ -99,4 +99,8 @@ TeacherSchema.pre('save', async function (next) {
   next();
 });
 
+TeacherSchema.methods.verifyPassword = async function (passwordInput) {
+  return await bcrypt.compare(passwordInput, this.password)
+}
+
 module.exports = mongoose.model('Teacher', TeacherSchema);

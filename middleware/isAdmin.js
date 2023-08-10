@@ -6,7 +6,7 @@ const isAdmin = async (req, res, next) => {
 
   const user = await Admin.findById(userId);
 
-  if (user.role !== 'admin') {
+  if (user?.role !== 'admin') {
     const err = new CustomError(
       'Access denied. Admins only!',
       403
